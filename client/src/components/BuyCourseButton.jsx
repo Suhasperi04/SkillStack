@@ -21,7 +21,7 @@ const BuyCourseButton = ({ courseId }) => {
        }
     } 
     if(isError){
-      toast.error(error?.data?.message || "Failed to create checkout session")
+      toast.error(error?.data?.message || error?.error || "Failed to create checkout session")
     }
   },[data, isSuccess, isError, error])
 

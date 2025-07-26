@@ -34,10 +34,10 @@ const CreateLecture = () => {
   useEffect(() => {
     if (isSuccess) {
       refetch();
-      toast.success(data.message);
+      toast.success(data?.message || "Lecture created successfully");
     }
     if (error) {
-      toast.error(error.data.message);
+      toast.error(error?.data?.message || error?.error || "Failed to create lecture");
     }
   }, [isSuccess, error]);
 

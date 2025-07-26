@@ -93,16 +93,16 @@ const LectureTab = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success(data.message);
+      toast.success(data?.message || "Lecture updated successfully");
     }
     if (error) {
-      toast.error(error.data.message);
+      toast.error(error?.data?.message || error?.error || "Failed to update lecture");
     }
   }, [isSuccess, error]);
 
   useEffect(()=>{
     if(removeSuccess){
-      toast.success(removeData.message);
+      toast.success(removeData?.message || "Lecture removed successfully");
     }
   },[removeSuccess])
 
