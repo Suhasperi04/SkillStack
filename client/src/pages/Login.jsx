@@ -15,8 +15,10 @@ import {
   useLoginUserMutation,
   useRegisterUserMutation,
 } from "@/features/api/authApi";
-import { Loader2 } from "lucide-react";
+import { guestLoggedIn } from "@/features/authSlice";
+import { Loader2, UserCheck } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -48,6 +50,7 @@ const Login = () => {
     },
   ] = useLoginUserMutation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const changeInputHandler = (e, type) => {
     const { name, value } = e.target;
@@ -62,6 +65,20 @@ const Login = () => {
     const inputData = type === "signup" ? signupInput : loginInput;
     const action = type === "signup" ? registerUser : loginUser;
     await action(inputData);
+  };
+
+  const handleGuestLogin = () => {
+    const guestUser = {
+      _id: "guest-user-id",
+      name: "Guest",
+      email: "guest@gmail.com",
+      role: "student",
+      isGuest: true
+    };
+    
+    dispatch(guestLoggedIn({ user: guestUser }));
+    toast.success("Welcome! You're logged in as a guest for student role.");
+    navigate("/");
   };
 
   useEffect(() => {
@@ -199,10 +216,11 @@ const Login = () => {
                 />
               </div>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex flex-col space-y-2">
               <Button
                 disabled={loginIsLoading}
                 onClick={() => handleRegistration("login")}
+                className="w-full"
               >
                 {loginIsLoading ? (
                   <>
@@ -213,6 +231,21 @@ const Login = () => {
                   "Login"
                 )}
               </Button>
+              
+              {/* Guest Login Button for Interviewers */}
+              <div className="w-full pt-2 border-t">
+                <p className="text-sm text-gray-600 mb-2 text-center">
+                  For Interviewers / Demo Access
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={handleGuestLogin}
+                  className="w-full"
+                >
+                  <UserCheck className="mr-2 h-4 w-4" />
+                  Continue as Guest
+                </Button>
+              </div>
             </CardFooter>
           </Card>
         </TabsContent>
