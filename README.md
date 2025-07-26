@@ -6,7 +6,7 @@
 
 A full-stack Learning Management System built with React, Node.js, and MongoDB.
 
-## 🚀 Features
+## Features
 
 - **User Authentication**: Secure login/register system
 - **Course Management**: Create, edit, and manage courses
@@ -58,7 +58,7 @@ lms/
     └── uploads/          # File uploads
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js (v16 or higher)
