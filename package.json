@@ -1,0 +1,14 @@
+{
+  "name": "lms-backend",
+  "version": "1.0.0",
+  "description": "LMS Backend API",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "cd server && npm run dev",
+    "install": "cd server && npm install",
+    "dev": "cd server && npm run dev"
+  },
+  "keywords": ["lms", "backend", "api"],
+  "author": "",
+  "license": "ISC"
+} 
