@@ -75,7 +75,15 @@ export const login = async (req,res) => {
 
 export const logout = async (_,res) => {
     try {
-        return res.status(200).cookie("token", "", {maxAge:0}).json({
+        const isProduction = process.env.NODE_ENV === 'production';
+        
+        return res.status(200).cookie("token", "", {
+            maxAge: 0,
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? "none" : "strict",
+            domain: isProduction ? ".onrender.com" : undefined,
+        }).json({
             message:"Logged out successfully.",
             success:true
         })
