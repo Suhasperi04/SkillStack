@@ -1,95 +1,150 @@
-import { Button } from "@/components/ui/button";
+import { Menu, Layers } from "lucide-react";
+import React, { useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { userLoggedOut } from "@/features/authSlice";
-import { LogOut, User, UserCheck } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import DarkMode from "@/DarkMode";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
+import { Separator } from "@radix-ui/react-dropdown-menu";
 import { Link, useNavigate } from "react-router-dom";
+import { useLogoutUserMutation } from "@/features/api/authApi";
 import { toast } from "sonner";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
-  const { user, isAuthenticated, isGuest } = useSelector((store) => store.auth);
-  const dispatch = useDispatch();
+  const { user } = useSelector((store) => store.auth);
+  const [logoutUser, { data, isSuccess }] = useLogoutUserMutation();
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    dispatch(userLoggedOut());
-    toast.success("Logged out successfully");
-    navigate("/");
+  const logoutHandler = async () => {
+    await logoutUser();
   };
 
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data?.message || "User log out.");
+      navigate("/login");
+    }
+  }, [isSuccess]);
+
   return (
-    <nav className="border-b">
-      <div className="flex h-16 items-center px-4">
-        <Link to="/" className="font-bold text-xl">
-          LMS Platform
-        </Link>
-        <div className="ml-auto flex items-center space-x-4">
-          {isAuthenticated ? (
-            <div className="flex items-center space-x-2">
-              {isGuest && (
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  <UserCheck className="h-3 w-3" />
-                  Guest Demo
-                </Badge>
-              )}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src="/avatars/01.png" alt={user?.name} />
-                      <AvatarFallback>
-                        {user?.name?.charAt(0)?.toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user?.name}</p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {user?.email}
-                      </p>
-                      {isGuest && (
-                        <p className="text-xs leading-none text-blue-600 font-medium">
-                          Demo Mode - Limited Access
-                        </p>
-                      )}
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/profile" className="flex items-center">
-                      <User className="mr-2 h-4 w-4" />
-                      Profile
-                    </Link>
+    <div className="h-16 dark:bg-[#020817] bg-white border-b dark:border-b-gray-800 border-b-gray-200 fixed top-0 left-0 right-0 duration-300 z-10">
+      {/* Desktop */}
+      <div className="max-w-7xl mx-auto hidden md:flex justify-between items-center gap-10 h-full">
+        <div className="flex items-center gap-2">
+          <Layers size={30} />
+          <Link to="/">
+            <h1 className="hidden md:block font-extrabold text-2xl">
+              SkillStack
+            </h1>
+          </Link>
+        </div>
+        {/* User icons and dark mode icon  */}
+        <div className="flex items-center gap-8">
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar>
+                  <AvatarImage
+                    src={user?.photoUrl || "https://github.com/shadcn.png"}
+                    alt="@shadcn"
+                  />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>
+                    <Link to="my-learning">My learning</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-600">
-                    <LogOut className="mr-2 h-4 w-4" />
+                  <DropdownMenuItem>
+                    {" "}
+                    <Link to="profile">Edit Profile</Link>{" "}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={logoutHandler}>
                     Log out
                   </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+                </DropdownMenuGroup>
+                {user?.role === "instructor" && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem><Link to="/admin/dashboard">Dashboard</Link></DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
-            <Link to="/login">
-              <Button>Login</Button>
-            </Link>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={() => navigate("/login")}>
+                Login
+              </Button>
+              <Button onClick={() => navigate("/login")}>Signup</Button>
+            </div>
           )}
+          <DarkMode />
         </div>
       </div>
-    </nav>
+      {/* Mobile device  */}
+      <div className="flex md:hidden items-center justify-between px-4 h-full">
+        <h1 className="font-extrabold text-2xl">SkillStack</h1>
+        <MobileNavbar user={user}/>
+      </div>
+    </div>
   );
 };
 
 export default Navbar;
+
+const MobileNavbar = ({user}) => {
+  const navigate = useNavigate();
+  
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button
+          size="icon"
+          className="rounded-full hover:bg-gray-200"
+          variant="outline"
+        >
+          <Menu />
+        </Button>
+      </SheetTrigger>
+      <SheetContent className="flex flex-col">
+        <SheetHeader className="flex flex-row items-center justify-between mt-2">
+          <SheetTitle> <Link to="/">SkillStack</Link></SheetTitle>
+          <DarkMode />
+        </SheetHeader>
+        <Separator className="mr-2" />
+        <nav className="flex flex-col space-y-4">
+          <Link to="/my-learning">My Learning</Link>
+          <Link to="/profile">Edit Profile</Link>
+          <p>Log out</p>
+        </nav>
+        {user?.role === "instructor" && (
+          <SheetFooter>
+            <SheetClose asChild>
+              <Button type="submit" onClick={()=> navigate("/admin/dashboard")}>Dashboard</Button>
+            </SheetClose>
+          </SheetFooter>
+        )}
+      </SheetContent>
+    </Sheet>
+  );
+};

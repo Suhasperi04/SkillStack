@@ -20,7 +20,6 @@ import {
   AdminRoute,
   AuthenticatedUser,
   ProtectedRoute,
-  GuestRoute,
 } from "./components/ProtectedRoutes";
 import PurchaseCourseProtectedRoute from "./components/PurchaseCourseProtectedRoute";
 import { ThemeProvider } from "./components/ThemeProvider";
@@ -66,17 +65,17 @@ const appRouter = createBrowserRouter([
       {
         path: "course/search",
         element: (
-          <GuestRoute>
+          <ProtectedRoute>
             <SearchPage />
-          </GuestRoute>
+          </ProtectedRoute>
         ),
       },
       {
         path: "course-detail/:courseId",
         element: (
-          <GuestRoute>
+          <ProtectedRoute>
             <CourseDetail />
-          </GuestRoute>
+          </ProtectedRoute>
         ),
       },
       {

@@ -10,7 +10,6 @@ export const ProtectedRoute = ({children}) => {
 
     return children;
 }
-
 export const AuthenticatedUser = ({children}) => {
     const {isAuthenticated} = useSelector(store=>store.auth);
 
@@ -32,16 +31,5 @@ export const AdminRoute = ({children}) => {
         return <Navigate to="/"/>
     }
 
-    return children;
-}
-
-export const GuestRoute = ({children}) => {
-    const {isAuthenticated, isGuest} = useSelector(store=>store.auth);
-
-    if(!isAuthenticated){
-        return <Navigate to="/login"/>
-    }
-
-    // Allow both regular users and guests
     return children;
 }
