@@ -22,10 +22,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-    origin: process.env.NODE_ENV === "production" 
-        ? true  // Allow all origins in production for Vercel
-        : "http://localhost:5173",
-    credentials: true
+    origin:"http://localhost:5173",
+    credentials:true
 }));
  
 // apis
@@ -36,13 +34,8 @@ app.use("/api/v1/purchase", purchaseRoute);
 app.use("/api/v1/progress", courseProgressRoute);
  
  
-// For Vercel deployment
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => {
-        console.log(`Server listen at port ${PORT}`);
-    });
-}
-
-export default app;
+app.listen(PORT, () => {
+    console.log(`Server listen at port ${PORT}`);
+})
 
 
